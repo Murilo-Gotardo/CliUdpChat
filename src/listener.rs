@@ -1,6 +1,7 @@
 use std::net::{UdpSocket, Ipv4Addr};
 use std::io;
 use std::io::{stdout, Write};
+use crossterm::style::Stylize;
 use crate::message::Message;
 
 pub struct Listener {
@@ -37,10 +38,9 @@ impl Listener {
                         let json = &*String::from_utf8_lossy(&buf[..size]);
                         let message: Message = serde_json::from_str(json)?;
                         let mut stdout = stdout().lock();
-                        
-                        writeln!(stdout).unwrap();
-                        writeln!(stdout, "{:?}: {}: {}", message.time(), message.user_name(), message.message()).unwrap();
-                        writeln!(stdout).unwrap();
+                        let colored_time = message.time().as_ref().unwrap().to_string();
+                        let colored_name = message.user_name().trim().to_string();
+                        write!(stdout, "{}||{}: {}", colored_time.blue(), colored_name.dark_red(), message.message()).unwrap();
                     }
                     Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
                         continue;

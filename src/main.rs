@@ -20,20 +20,21 @@ fn main() -> io::Result<()> {
     print!("Digite seu ip: ");
     io::stdout().flush().expect("falha ao limpar buffer do stdout");
     let mut ip_input = String::new();
-    io::stdin().read_line(&mut ip_input)?;    
+    io::stdin().read_line(&mut ip_input)?;
     let ip_address = ip_input.trim().parse::<Ipv4Addr>().expect("Ip inválido");
 
     print!("Digite seu nome: ");
     io::stdout().flush().expect("falha ao limpar buffer do stdout");
     let mut name_input = String::new();
-    io::stdin().read_line(&mut name_input).expect("falha oa ler nome");
+    io::stdin().read_line(&mut name_input).expect("falha ao ler nome");
     
     let sender_clone = Arc::clone(&sender);
     let thread_tx = thread::spawn(move || {
         let mut sender = sender_clone.lock().unwrap();
         sender.join_multicast_group(ip_address).expect("falha ao entrar no grupo multicast");
+        println!("Entrando no grupo...");
+        println!("Pode digitar!");
         loop {
-            print!("Escreva uma mensagem: ");
             io::stdout().flush().expect("falha ao limpar buffer do stdout");
             let mut message_to_send = String::new();
             io::stdin().read_line(&mut message_to_send).expect("falha ao ler mensagem");

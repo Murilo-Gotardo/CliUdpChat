@@ -26,7 +26,7 @@ impl Sender {
 
     pub fn broadcast_message(&self, message: Message) -> io::Result<()> {
         let json = serde_json::to_string(&message)?;
-        
+
         if let Some(ref socket) = self.socket {
             let end_point = SocketAddrV4::new(self.multicast_address, self.multicast_port);
             socket.send_to(json.as_bytes(), end_point)?;
